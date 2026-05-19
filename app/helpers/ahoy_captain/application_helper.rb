@@ -1,7 +1,5 @@
 module AhoyCaptain
   module ApplicationHelper
-    include Pagy::Frontend
-
     def current_property_filter
       return nil unless params[:q]
 
@@ -78,7 +76,7 @@ module AhoyCaptain
 
     def render_pagination
       if @pagination
-        pagy_nav(@pagination).html_safe
+        @pagination.series_nav.html_safe
       else
         ""
       end
