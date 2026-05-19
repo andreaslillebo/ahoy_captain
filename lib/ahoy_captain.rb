@@ -3,6 +3,7 @@ require "ahoy_captain/railtie"
 require "ahoy_captain/engine"
 require "ahoy_captain/goals"
 require "ahoy_captain/funnels"
+require "ahoy_captain/adapter"
 require "ahoy_captain/configuration"
 require "ahoy_captain/predicate_label"
 require 'ahoy_captain/ahoy/visit_methods'

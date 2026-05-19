@@ -1,7 +1,7 @@
 module AhoyCaptain
   class PropertiesController < ApplicationController
     before_action do
-      @options = ::Ahoy::Event.select("jsonb_object_keys(properties) as keys").distinct("jsonb_object_keys(properties)").map(&:keys).map { |key| [Base64.urlsafe_encode64(key), key]}.to_h
+      @options = AhoyCaptain::Adapter.current.property_keys_relation(::Ahoy::Event).map(&:keys).map { |key| [Base64.urlsafe_encode64(key), key]}.to_h
     end
 
     def index
@@ -15,7 +15,7 @@ module AhoyCaptain
           "COALESCE(properties->>'#{value}', '(none)') AS label",
           "COUNT(*) AS events_count",
           "COUNT(DISTINCT visit_id) AS unique_visitors_count",
-          "(COUNT(DISTINCT visit_id)/COUNT(*)::numeric) * 100 as percentage"
+          "(COUNT(DISTINCT visit_id) / CAST(COUNT(*) AS REAL)) * 100 as percentage"
         )
         .group("COALESCE(properties->>'#{value}', '(none)')")
         .order(Arel.sql "COUNT(*) desc")

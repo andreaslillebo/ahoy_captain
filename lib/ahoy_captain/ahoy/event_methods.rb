@@ -39,7 +39,7 @@ module AhoyCaptain
         }
 
         scope :with_property_values, ->(value) {
-          where("JSONB_EXISTS(properties, '#{value}')")
+          where(AhoyCaptain::Adapter.current.json_has_key_sql("properties", value))
         }
 
         ransacker :properties, args: [:parent, :ransacker_args] do |parent, args|

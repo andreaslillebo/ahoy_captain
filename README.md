@@ -6,7 +6,16 @@ A full-featured, mountable analytics dashboard for your Rails app, shamelessly i
 <a href="https://github.com/joshmn/ahoy_captain/blob/main/ss.jpg"><img src="ss.jpg" style="max-width:300px" /></a>
 ## Notice
 
-Currently requires using PG and a JSONB column for your data.
+Supported databases:
+
+- **PostgreSQL** with a `jsonb` `properties` column on `ahoy_events` (the original target).
+- **SQLite** (3.38+) with a `json` / `text` `properties` column. Modern Rails 8 ships a sqlite3 build that satisfies this.
+
+The database adapter is auto-detected from `Ahoy::Event`'s connection; no extra configuration is required to pick between the two.
+
+### SQLite caveats
+
+- `Ahoy::Visit#referring_domain` is treated as the already-clean host. PostgreSQL strips a leftover scheme / `www.` prefix via regex; SQLite has no built-in regex so the column is emitted unchanged. If your tracker writes full URLs to that column, normalize them before insert.
 
 ## Installation
 

@@ -3,7 +3,7 @@ module AhoyCaptain
     module Properties
       class NamesController < BaseController
         def index
-          render json: ::Ahoy::Event.select("jsonb_object_keys(properties) as keys").distinct("jsonb_object_keys(properties)").map(&:keys).map { |key| serialize(key) }
+          render json: AhoyCaptain::Adapter.current.property_keys_relation(::Ahoy::Event).map(&:keys).map { |key| serialize(key) }
         end
       end
     end

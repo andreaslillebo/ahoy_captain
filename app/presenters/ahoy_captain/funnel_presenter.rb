@@ -35,7 +35,7 @@ module AhoyCaptain
         queries,
         ).select(select).from("#{last_goal.id}").order("sort_order asc")
 
-      items = ::Ahoy::Event.with(steps: steps).select("total_events, unique_visits, name, round((total_events::numeric/lag(total_events, 1) over ()),2) as drop_off").from("steps").order("sort_order asc").index_by(&:name)
+      items = ::Ahoy::Event.with(steps: steps).select("total_events, unique_visits, name, round((CAST(total_events AS REAL) / lag(total_events, 1) over ()), 2) as drop_off").from("steps").order("sort_order asc").index_by(&:name)
       items.delete("_internal_total_visits_")
       @steps = []
 
