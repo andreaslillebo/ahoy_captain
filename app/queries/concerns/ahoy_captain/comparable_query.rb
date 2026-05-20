@@ -66,15 +66,24 @@ module AhoyCaptain
       end
 
       def result
+        # The CTEs project anonymous aggregate columns. PG lets you read each
+        # as a composite tuple via `SELECT current FROM current` (returned
+        # stringified as `"(1234)"`, which this code used to strip with
+        # `[1...-1]`). SQLite has no such implicit composite, so project the
+        # value through a scalar subquery instead. Portable across PG, MySQL,
+        # SQLite.
         result = @model.with(
           current: @query.to_sql,
           compare: @compare.to_sql
-        ).select("current, compare").from("current, compare")[0]
+        ).select(
+          "(SELECT * FROM current) AS current",
+          "(SELECT * FROM compare) AS compare"
+        ).from(Arel.sql("(SELECT 1) AS comparison_pivot"))[0]
         type = @query_class.cast_type(@column)
 
         if result
-          current = @query_class.cast_value(type, result.current[1...-1])
-          compare = @query_class.cast_value(type, result.compare[1...-1])
+          current = @query_class.cast_value(type, result.current)
+          compare = @query_class.cast_value(type, result.compare)
         else
           current = @query_class.cast_value(type, '0')
           compare = @query_class.cast_value(type, '0')
