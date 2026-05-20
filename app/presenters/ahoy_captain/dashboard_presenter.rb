@@ -29,7 +29,7 @@ module AhoyCaptain
     def bounce_rate
       query = Stats::BounceRatesQuery.call(params)
       if compare_mode?
-        query.with_comparison(true)
+        query.with_comparison(true).average("bounce_rate")
       else
         query.average("bounce_rate").try(:round, 2) || 0
       end
